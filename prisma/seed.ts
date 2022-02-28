@@ -17,18 +17,23 @@ function getGroceryItems() {
   return [
     {
       name: "Bananas",
+      type: "fruit",
     },
     {
       name: "Chicken",
+      type: "fruit",
     },
     {
       name: "Apples",
+      type: "fruit",
     },
     {
       name: "Peanut butter",
+      type: "fruit",
     },
     {
       name: "Pasta",
+      type: "fruit",
     },
   ];
 }

@@ -22,7 +22,7 @@ export let action: ActionFunction = async ({ request }) => {
   if (typeof name !== "string") {
     throw new Error("Form not submitted correctly.");
   }
-  const fields = { name };
+  const fields = { name, type: "test" };
   const newGroceryItem = await db.groceryItem.create({ data: fields });
   return json(newGroceryItem);
 };

@@ -1,18 +1,22 @@
-# fly.toml file generated for grocery-items on 2022-02-27T18:48:54+10:00
+# fly.toml file generated for grocery-list on 2022-03-01T06:41:18+10:00
 
-app = "grocery-items"
+app = "grocery-list"
 
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
-  NODE_ENV = "production"
-  PORT = 8080
+  DATABASE_URL = "file:/data/sqlite.db"
+  PORT = "8080"
 
 [experimental]
-  allowed_public_ports = []
-  auto_rollback = true
+  cmd = "start_with_migrations.sh"
+  entrypoint = "sh"
+
+[[mounts]]
+  destination = "/data"
+  source = "data"
 
 [[services]]
   http_checks = []
