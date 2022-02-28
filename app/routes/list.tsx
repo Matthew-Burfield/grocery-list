@@ -1,12 +1,7 @@
 import { GroceryItem } from "@prisma/client";
-import {
-  ActionFunction,
-  Form,
-  json,
-  LoaderFunction,
-  useLoaderData,
-} from "remix";
+import { Form, useLoaderData } from "remix";
 import { db } from "~/utils/db.server";
+import type { ActionFunction, LoaderFunction } from "remix";
 
 type LoaderData = { groceryItems: Array<GroceryItem> };
 export let loader: LoaderFunction = async () => {
@@ -17,14 +12,34 @@ export let loader: LoaderFunction = async () => {
 };
 
 export let action: ActionFunction = async ({ request }) => {
-  const form = await request.formData();
-  const name = form.get("name");
-  if (typeof name !== "string") {
-    throw new Error("Form not submitted correctly.");
+  const formData = await request.formData();
+  const { _action, ...values } = Object.fromEntries(formData);
+
+  switch (_action) {
+    case "create": {
+      if (typeof values.name !== "string") {
+        throw Error("Form not submitted correctly");
+      }
+      const data = {
+        name: values.name,
+        type: "test",
+      };
+      return await db.groceryItem.create({ data });
+    }
+
+    case "check": {
+      if (typeof values.id !== "string") {
+        throw Error("Form not submitted correctly");
+      }
+      if (typeof values.isChecked !== "string") {
+        throw Error("Form not submitted correctly");
+      }
+      return await db.groceryItem.update({
+        data: { isChecked: values.isChecked === "true" },
+        where: { id: values.id },
+      });
+    }
   }
-  const fields = { name, type: "test" };
-  const newGroceryItem = await db.groceryItem.create({ data: fields });
-  return json(newGroceryItem);
 };
 
 export default function list() {
@@ -32,15 +47,52 @@ export default function list() {
 
   return (
     <>
-      {data.groceryItems.map((item) => (
-        <li key={item.id}>{item.name}</li>
-      ))}
+      {data.groceryItems
+        .filter((item) => !item.isChecked)
+        .map((item) => (
+          <li key={item.id}>
+            <Form method="post">
+              <input type="hidden" name="id" value={item.id} />
+              <input type="hidden" name="isChecked" value={"true"} />
+              <button
+                type="submit"
+                aria-label="check"
+                name="_action"
+                value="check"
+              >
+                x
+              </button>
+            </Form>{" "}
+            {item.name}
+          </li>
+        ))}
       <Form method="post">
         <label>
           Item: <input name="name" />
         </label>
-        <button type="submit">Submit</button>
+        <button type="submit" name="_action" value="create">
+          Submit
+        </button>
       </Form>
+      {data.groceryItems
+        .filter((item) => item.isChecked)
+        .map((item) => (
+          <li key={item.id}>
+            <Form method="post">
+              <input type="hidden" name="id" value={item.id} />
+              <input type="hidden" name="isChecked" value={"false"} />
+              <button
+                type="submit"
+                aria-label="check"
+                name="_action"
+                value="check"
+              >
+                x
+              </button>
+            </Form>{" "}
+            {item.name}
+          </li>
+        ))}
     </>
   );
 }

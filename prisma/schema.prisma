@@ -16,4 +16,5 @@ model GroceryItem {
   updatedAt  DateTime @updatedAt
   name       String
   type       String
+  isChecked  Boolean  @default(false)
 }
