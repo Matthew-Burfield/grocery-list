@@ -7,7 +7,7 @@ import {
   deleteGroceryItem,
   getAllGroceryItems,
   unCheckGroceryItem,
-} from "~/utils/api";
+} from "~/utils/api/groceryitem";
 import React from "react";
 import GroceryItem from "~/components/GroceryItem";
 

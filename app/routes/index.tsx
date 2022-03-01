@@ -9,6 +9,9 @@ export default function Index() {
           <Link to="/list">Grocery List</Link>
         </li>
         <li>
+          <Link to="/every-week-items">Every week items</Link>
+        </li>
+        <li>
           <a
             target="_blank"
             href="https://remix.run/tutorials/jokes"
