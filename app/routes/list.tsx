@@ -1,4 +1,4 @@
-import { GroceryItem } from "@prisma/client";
+import type { GroceryItem as tGroceryItem } from "@prisma/client";
 import { Form, useLoaderData, useTransition } from "remix";
 import type { ActionFunction, LoaderFunction } from "remix";
 import {
@@ -8,8 +8,9 @@ import {
   unCheckGroceryItem,
 } from "~/utils/api";
 import React from "react";
+import GroceryItem from "~/components/GroceryItem";
 
-type LoaderData = { groceryItems: Array<GroceryItem> };
+type LoaderData = { groceryItems: Array<tGroceryItem> };
 export let loader: LoaderFunction = async () => {
   const data: LoaderData = {
     groceryItems: await getAllGroceryItems(),
@@ -56,24 +57,15 @@ export default function list() {
 
   return (
     <>
-      {data.groceryItems
-        .filter((item) => !item.isChecked)
-        .map((item) => (
-          <li key={item.id}>
-            <Form method="post">
-              <input type="hidden" name="id" value={item.id} />
-              <button
-                type="submit"
-                aria-label="check"
-                name="_action"
-                value="check"
-              >
-                x
-              </button>
-            </Form>{" "}
-            {item.name}
-          </li>
-        ))}
+      <ul>
+        {data.groceryItems
+          .filter((item) => !item.isChecked)
+          .map((item) => (
+            <li key={item.id}>
+              <GroceryItem item={item} action="check" />
+            </li>
+          ))}
+      </ul>
       <Form method="post" ref={formRef}>
         <label>
           Item: <input name="name" />
@@ -82,24 +74,15 @@ export default function list() {
           Submit
         </button>
       </Form>
-      {data.groceryItems
-        .filter((item) => item.isChecked)
-        .map((item) => (
-          <li key={item.id}>
-            <Form method="post">
-              <input type="hidden" name="id" value={item.id} />
-              <button
-                type="submit"
-                aria-label="uncheck"
-                name="_action"
-                value="uncheck"
-              >
-                x
-              </button>
-            </Form>{" "}
-            {item.name}
-          </li>
-        ))}
+      <ul>
+        {data.groceryItems
+          .filter((item) => item.isChecked)
+          .map((item) => (
+            <li key={item.id}>
+              <GroceryItem item={item} action="uncheck" />
+            </li>
+          ))}
+      </ul>
     </>
   );
 }
