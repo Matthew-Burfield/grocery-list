@@ -1,43 +1,39 @@
 import { GroceryItem } from "@prisma/client";
 import { Form, useLoaderData } from "remix";
-import { db } from "~/utils/db.server";
 import type { ActionFunction, LoaderFunction } from "remix";
+import {
+  checkGroceryItemOffList,
+  createGroceryItem,
+  getAllGroceryItems,
+  unCheckGroceryItem,
+} from "~/utils/api";
 
 type LoaderData = { groceryItems: Array<GroceryItem> };
 export let loader: LoaderFunction = async () => {
   const data: LoaderData = {
-    groceryItems: await db.groceryItem.findMany(),
+    groceryItems: await getAllGroceryItems(),
   };
   return data;
 };
 
 export let action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const { _action, ...values } = Object.fromEntries(formData);
+  const action = formData.get("_action");
 
-  switch (_action) {
+  switch (action) {
     case "create": {
-      if (typeof values.name !== "string") {
-        throw Error("Form not submitted correctly");
-      }
-      const data = {
-        name: values.name,
+      return createGroceryItem({
+        name: formData.get("name") as string,
         type: "test",
-      };
-      return await db.groceryItem.create({ data });
+      });
     }
 
     case "check": {
-      if (typeof values.id !== "string") {
-        throw Error("Form not submitted correctly");
-      }
-      if (typeof values.isChecked !== "string") {
-        throw Error("Form not submitted correctly");
-      }
-      return await db.groceryItem.update({
-        data: { isChecked: values.isChecked === "true" },
-        where: { id: values.id },
-      });
+      return checkGroceryItemOffList(formData.get("id") as string);
+    }
+
+    case "uncheck": {
+      return unCheckGroceryItem(formData.get("id") as string);
     }
   }
 };
@@ -53,7 +49,6 @@ export default function list() {
           <li key={item.id}>
             <Form method="post">
               <input type="hidden" name="id" value={item.id} />
-              <input type="hidden" name="isChecked" value={"true"} />
               <button
                 type="submit"
                 aria-label="check"
@@ -80,12 +75,11 @@ export default function list() {
           <li key={item.id}>
             <Form method="post">
               <input type="hidden" name="id" value={item.id} />
-              <input type="hidden" name="isChecked" value={"false"} />
               <button
                 type="submit"
-                aria-label="check"
+                aria-label="uncheck"
                 name="_action"
-                value="check"
+                value="uncheck"
               >
                 x
               </button>
