@@ -8,7 +8,7 @@ interface Props {
 export default function GroceryItem(props: Props) {
   return (
     <>
-      <Form method="post">
+      <Form replace method="post">
         <input type="hidden" name="id" value={props.item.id} />
         {props.item.name}
         <button

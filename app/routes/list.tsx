@@ -71,7 +71,7 @@ export default function list() {
             </li>
           ))}
       </ul>
-      <Form method="post" ref={formRef}>
+      <Form replace method="post" ref={formRef}>
         <label>
           Item: <input name="name" />
         </label>
