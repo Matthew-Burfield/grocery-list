@@ -1,5 +1,5 @@
 import { GroceryItem } from "@prisma/client";
-import { Form, useLoaderData } from "remix";
+import { Form, useLoaderData, useTransition } from "remix";
 import type { ActionFunction, LoaderFunction } from "remix";
 import {
   checkGroceryItemOffList,
@@ -7,6 +7,7 @@ import {
   getAllGroceryItems,
   unCheckGroceryItem,
 } from "~/utils/api";
+import React from "react";
 
 type LoaderData = { groceryItems: Array<GroceryItem> };
 export let loader: LoaderFunction = async () => {
@@ -40,6 +41,18 @@ export let action: ActionFunction = async ({ request }) => {
 
 export default function list() {
   const data = useLoaderData<LoaderData>();
+  const transition = useTransition();
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  const isAdding =
+    transition.state === "submitting" &&
+    transition.submission.formData.get("_action") === "create";
+
+  React.useEffect(() => {
+    if (!isAdding) {
+      formRef.current?.reset();
+    }
+  }, [isAdding]);
 
   return (
     <>
@@ -61,7 +74,7 @@ export default function list() {
             {item.name}
           </li>
         ))}
-      <Form method="post">
+      <Form method="post" ref={formRef}>
         <label>
           Item: <input name="name" />
         </label>
