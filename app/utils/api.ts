@@ -24,3 +24,9 @@ export async function unCheckGroceryItem(id: string) {
     where: { id },
   });
 }
+
+export async function deleteGroceryItem(id: string) {
+  return db.groceryItem.delete({
+    where: { id },
+  });
+}

@@ -18,10 +18,18 @@ export default function GroceryItem(props: Props) {
           name="_action"
           value={props.action}
         >
+          ✔️
+        </button>
+        {props.item.name}
+        <button
+          type="submit"
+          aria-label={"delete"}
+          name="_action"
+          value={"delete"}
+        >
           x
         </button>
-      </Form>{" "}
-      {props.item.name}
+      </Form>
     </>
   );
 }

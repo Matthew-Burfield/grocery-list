@@ -4,6 +4,7 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import {
   checkGroceryItemOffList,
   createGroceryItem,
+  deleteGroceryItem,
   getAllGroceryItems,
   unCheckGroceryItem,
 } from "~/utils/api";
@@ -36,6 +37,10 @@ export let action: ActionFunction = async ({ request }) => {
 
     case "uncheck": {
       return unCheckGroceryItem(formData.get("id") as string);
+    }
+
+    case "delete": {
+      return deleteGroceryItem(formData.get("id") as string);
     }
   }
 };
