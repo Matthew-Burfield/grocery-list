@@ -4,4 +4,5 @@ node_modules
 /build
 /public/build
 /prisma/dev.db
+/app/styles/app.css
 .env

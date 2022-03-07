@@ -8,8 +8,12 @@
     "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production remix build",
-    "dev": "cross-env NODE_ENV=development remix dev",
+    "build": "npm run build:remix && npm run build:css",
+    "build:remix": "cross-env NODE_ENV=production remix build",
+    "build:css": "tailwindcss -m -i ./styles/app.css -o app/styles/app.css",
+    "dev": "npm run dev:remix && npm run dev:css",
+    "dev:remix": "cross-env NODE_ENV=development remix dev",
+    "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
     "postinstall": "remix setup node",
     "start": "cross-env NODE_ENV=production remix-serve build"
   },
@@ -26,10 +30,14 @@
     "@remix-run/dev": "^1.2.2",
     "@types/react": "^17.0.24",
     "@types/react-dom": "^17.0.9",
+    "autoprefixer": "^10.4.2",
+    "concurrently": "^7.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "esbuild-register": "^3.3.2",
+    "postcss": "^8.4.8",
     "prettier": "2.5.1",
     "prisma": "^3.10.0",
+    "tailwindcss": "^3.0.23",
     "typescript": "^4.5.5"
   },
   "engines": {
