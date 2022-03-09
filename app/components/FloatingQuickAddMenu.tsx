@@ -11,15 +11,18 @@ export default function FloatingQuickAddMenu() {
       <Popover.Button ref={reference}>+</Popover.Button>
       <Popover.Panel
         ref={floating}
+        // className="w-52 flex flex-col"
         style={{
           position: strategy,
           top: y ?? "",
           left: x ?? "",
-          width: "200px",
+          width: 200,
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <Link to="/">New "quick add" list</Link>
-        <Link to="/">Select "quick add" list</Link>
+        <Link to="/quick-add">New "quick add" list</Link>
+        <Link to="/quick-add-select">Select "quick add" list</Link>
       </Popover.Panel>
     </Popover>
   );

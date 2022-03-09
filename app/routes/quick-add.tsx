@@ -35,7 +35,7 @@ export let action: ActionFunction = async ({ request }) => {
   }
 };
 
-export default function list() {
+export default function CreateQuickAddList() {
   const data = useLoaderData<LoaderData>();
   const transition = useTransition();
   const formRef = React.useRef<HTMLFormElement>(null);
