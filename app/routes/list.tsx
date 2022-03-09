@@ -10,6 +10,7 @@ import {
 } from "~/utils/api/groceryitem";
 import React from "react";
 import GroceryItem from "~/components/GroceryItem";
+import FloatingQuickAddMenu from "~/components/FloatingQuickAddMenu";
 
 type LoaderData = { groceryItems: Array<tGroceryItem> };
 export let loader: LoaderFunction = async () => {
@@ -88,6 +89,7 @@ export default function list() {
             </li>
           ))}
       </ul>
+      <FloatingQuickAddMenu />
     </>
   );
 }
