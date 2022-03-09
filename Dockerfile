@@ -34,7 +34,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules /app/node_modules
 
 ADD prisma .
+RUN touch .env
+RUN echo DATABASE_URL="file:/data/sqlite.db" >> .env
 RUN npx prisma generate
+RUN npx prisma db push --force-reset --accept-data-loss
 
 ADD . .
 RUN npm run build

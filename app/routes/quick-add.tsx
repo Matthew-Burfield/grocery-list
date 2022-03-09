@@ -1,20 +1,39 @@
 import { Form, useLoaderData, useTransition } from "remix";
 import React from "react";
-import {
-  createEveryWeekItem,
-  deleteEveryWeekItem,
-  getAllEveryWeekItems,
-} from "~/utils/api/everyweekitem";
 import EveryWeekItem from "~/components/EveryWeekItem";
 import type { ActionFunction, LoaderFunction } from "remix";
-import type { EveryWeekItem as tEveryWeekItem } from "@prisma/client";
+import { QuickList, QuickListItem } from "@prisma/client";
+import { getQuickListById } from "~/utils/api/quickList";
+import { getAllQuickListItems } from "~/utils/api/quickListItem";
 
-type LoaderData = { items: Array<tEveryWeekItem> };
-export let loader: LoaderFunction = async () => {
-  const data: LoaderData = {
-    items: await getAllEveryWeekItems(),
+type NewQuickList = { name: string };
+type LoaderData = {
+  quickList: QuickList | NewQuickList;
+  items: Array<QuickListItem>;
+};
+function isIdValid(id: unknown) {
+  return typeof id === "number" && id > 0;
+}
+export let loader: LoaderFunction = async ({
+  request,
+}): Promise<LoaderData> => {
+  const url = new URL(request.url);
+  const quickListId = Number(url.searchParams.get("id"));
+  if (isIdValid(quickListId)) {
+    const quickList = await getQuickListById(quickListId);
+    if (quickList !== null) {
+      return {
+        quickList,
+        items: await getAllQuickListItems(quickListId),
+      };
+    }
+  }
+  return {
+    quickList: {
+      name: "",
+    },
+    items: [],
   };
-  return data;
 };
 
 export let action: ActionFunction = async ({ request }) => {
@@ -23,14 +42,9 @@ export let action: ActionFunction = async ({ request }) => {
 
   switch (action) {
     case "create": {
-      return createEveryWeekItem({
-        name: formData.get("name") as string,
-        type: "test",
-      });
     }
 
     case "delete": {
-      return deleteEveryWeekItem(formData.get("id") as string);
     }
   }
 };

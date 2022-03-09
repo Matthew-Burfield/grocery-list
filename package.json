@@ -15,7 +15,7 @@
     "dev:remix": "cross-env NODE_ENV=development remix dev",
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
     "postinstall": "remix setup node",
-    "start": "cross-env NODE_ENV=production remix-serve build"
+    "start": "cross-env PORT=8080 NODE_ENV=production remix-serve build"
   },
   "dependencies": {
     "@floating-ui/dom": "^0.4.0",

@@ -7,22 +7,32 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+  //url      = "file:/data/sqlite.db"
   url      = env("DATABASE_URL")
 }
 
 model GroceryItem {
-  id         String   @id @default(uuid())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  name       String
-  type       String
-  isChecked  Boolean  @default(false)
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  type      String
+  isChecked Boolean  @default(false)
 }
 
-model EveryWeekItem {
-  id         String   @id @default(uuid())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  name       String
-  type       String
+model QuickList {
+  id        Int             @id @default(autoincrement())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  name      String
+  items     QuickListItem[]
+}
+
+model QuickListItem {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  name      String
+  listId    Int
+  list      QuickList @relation(fields: [listId], references: [id])
 }

@@ -29,6 +29,8 @@ export let action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const action = formData.get("_action");
 
+  const id = Number(formData.get("id") as string);
+
   switch (action) {
     case "create": {
       return createGroceryItem({
@@ -38,15 +40,15 @@ export let action: ActionFunction = async ({ request }) => {
     }
 
     case "check": {
-      return checkGroceryItemOffList(formData.get("id") as string);
+      return checkGroceryItemOffList(id);
     }
 
     case "uncheck": {
-      return unCheckGroceryItem(formData.get("id") as string);
+      return unCheckGroceryItem(id);
     }
 
     case "delete": {
-      return deleteGroceryItem(formData.get("id") as string);
+      return deleteGroceryItem(id);
     }
   }
 };

@@ -1,17 +1,12 @@
-import { useLoaderData } from "remix";
+import { useLoaderData, Link } from "remix";
 import type { LoaderFunction } from "remix";
+import { QuickList } from "@prisma/client";
+import { getAllQuickLists } from "~/utils/api/quickList";
 
-type tQuickList = {
-  id: string;
-  name: string;
-};
-type LoaderData = { quickLists: Array<tQuickList> };
+type LoaderData = { quickLists: Array<QuickList> };
 export let loader: LoaderFunction = async () => {
   const data: LoaderData = {
-    quickLists: await Promise.resolve([
-      { id: "1", name: "Meat Loaf" },
-      { id: "2", name: "Stir Fry" },
-    ]),
+    quickLists: await getAllQuickLists(),
   };
   return data;
 };
@@ -23,7 +18,9 @@ export default function SelectQuickAddList() {
     <>
       <ul>
         {quickLists.map((quickList) => (
-          <li key={quickList.id}>{quickList.name}</li>
+          <li key={quickList.id}>
+            <Link to={`/quick-add?id=${quickList.id}`}>{quickList.name}</Link>
+          </li>
         ))}
       </ul>
     </>
