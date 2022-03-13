@@ -1,12 +1,12 @@
 import { Form, useLoaderData, useTransition } from "remix";
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import EveryWeekItem from "~/components/EveryWeekItem";
 import type { ActionFunction, LoaderFunction } from "remix";
 import { QuickList, QuickListItem } from "@prisma/client";
 import { getQuickListById } from "~/utils/api/quickList";
 import { getAllQuickListItems } from "~/utils/api/quickListItem";
 
-type NewQuickList = { name: string };
+type NewQuickList = { tempId: number; name: string };
 type LoaderData = {
   quickList: QuickList | NewQuickList;
   items: Array<QuickListItem>;
@@ -18,7 +18,7 @@ export let loader: LoaderFunction = async ({
   request,
 }): Promise<LoaderData> => {
   const url = new URL(request.url);
-  const quickListId = Number(url.searchParams.get("id"));
+  const quickListId = Number(url.searchParams.get(""));
   if (isIdValid(quickListId)) {
     const quickList = await getQuickListById(quickListId);
     if (quickList !== null) {
@@ -31,6 +31,7 @@ export let loader: LoaderFunction = async ({
   return {
     quickList: {
       name: "",
+      tempId: 0,
     },
     items: [],
   };
@@ -50,37 +51,42 @@ export let action: ActionFunction = async ({ request }) => {
 };
 
 export default function CreateQuickAddList() {
-  const data = useLoaderData<LoaderData>();
-  const transition = useTransition();
+  const [items, setItems] = React.useState<Array<NewQuickList>>([]);
+  const itemCount = React.useRef<number>(0);
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const isAdding =
-    transition.state === "submitting" &&
-    transition.submission.formData.get("_action") === "create";
-
-  React.useEffect(() => {
-    if (!isAdding) {
-      formRef.current?.reset();
-    }
-  }, [isAdding]);
+  function handleFormSubmit(e: SyntheticEvent) {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    const nameInput: HTMLInputElement | null =
+      form.querySelector('[name="name"]');
+    const nameValue = nameInput?.value || "";
+    setItems((items) => [
+      ...items,
+      { tempId: itemCount.current++, name: nameValue },
+    ]);
+    nameInput?.focus();
+    form.reset();
+  }
 
   return (
     <>
+      <h1>New Quick List</h1>
       <ul>
-        {data.items.map((item) => (
-          <li key={item.id}>
+        {items.map((item) => (
+          <li key={item.tempId}>
             <EveryWeekItem item={item} />
           </li>
         ))}
       </ul>
-      <Form replace method="post" ref={formRef}>
+      <form ref={formRef} onSubmit={handleFormSubmit}>
         <label>
-          Item: <input name="name" />
+          Item: <input name="name" id="name" />
         </label>
-        <button type="submit" name="_action" value="create">
-          Submit
+        <button value="add" type="submit">
+          Add
         </button>
-      </Form>
+      </form>
     </>
   );
 }
